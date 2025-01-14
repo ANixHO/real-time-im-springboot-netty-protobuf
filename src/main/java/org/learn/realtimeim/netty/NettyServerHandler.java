@@ -4,11 +4,13 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.learn.realtimeim.protocol.message.Message;
+import org.w3c.dom.Text;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,14 +33,16 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         log.info("Connect to client: {}", ctx.channel().remoteAddress());
-        Message message = Message.newBuilder()
-                .setMessageId("0")
-                .setChatId("0")
-                .setSenderId("0")
-                .setContent("Channel Active!")
-                .build();
+//        Message message = Message.newBuilder()
+//                .setMessageId("0")
+//                .setChatId("0")
+//                .setSenderId("0")
+//                .setContent("Channel Active!")
+//                .build();
+//
+//        ctx.writeAndFlush(message);
 
-        ctx.writeAndFlush(message);
+        ctx.writeAndFlush("Hello! Channel active!");
         super.channelActive(ctx);
 
     }
@@ -48,16 +52,27 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object message) throws Exception {
-        log.info("Get {}th message from client: {}", connect_count, message);
+        log.info("Get {}th message from client", connect_count);
 
-        try{
-        if (message instanceof Message msg){
-            log.info("Get message from client: {}", msg.toString());
-        } else {
-            log.info("Unknown data: {}", message);
-            return;
-        }
-        } catch (Exception e){
+        try {
+            if (message instanceof TextWebSocketFrame msg){
+                log.info("Here is the message: {}", msg.text());
+                TextWebSocketFrame res = new TextWebSocketFrame("Get the {}th message from client");
+                ctx.writeAndFlush(res);
+//            if (message instanceof Message msg) {
+//                log.info("Get message from client: {}", msg.toString());
+//                Message responseMessage = Message.newBuilder()
+//                        .setMessageId("1")
+//                        .setChatId("1")
+//                        .setSenderId("1")
+//                        .setContent("Message received")
+//                        .build();
+//                ctx.writeAndFlush(responseMessage);
+            } else {
+                log.info("Unknown data: {}", message);
+                return;
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             ReferenceCountUtil.release(message);
@@ -69,11 +84,11 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      * handling overtime, this executes when haven't received heartbeat from client for 5 secs
      * if it happens twice, the channel will close
      */
-    public void userEventTriggered(ChannelHandlerContext ctx, Object object) throws Exception{
-        if (object instanceof IdleStateEvent event){
-            if (IdleState.READER_IDLE.equals(event.state())){
+    public void userEventTriggered(ChannelHandlerContext ctx, Object object) throws Exception {
+        if (object instanceof IdleStateEvent event) {
+            if (IdleState.READER_IDLE.equals(event.state())) {
                 log.info("Haven't been received data from client for 5 seconds");
-                if (idle_count.get() > 1){
+                if (idle_count.get() > 10) {
                     log.info("Close this inactive channel");
                     ctx.channel().close();
                 }
@@ -89,7 +104,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     /**
      * Exception handling
      */
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception{
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
         ctx.close();
     }

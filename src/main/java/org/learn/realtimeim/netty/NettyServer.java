@@ -1,6 +1,5 @@
 package org.learn.realtimeim.netty;
 
-import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -14,7 +13,6 @@ import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StreamUtils;
 
 import java.net.InetSocketAddress;
 
@@ -52,29 +50,25 @@ public class NettyServer {
         bootstrap.group(boss, work)
                 .channel(NioServerSocketChannel.class)
                 .localAddress(new InetSocketAddress(nettyPort))
-                .option(ChannelOption.SO_BACKLOG, 1024)
-                .childOption(ChannelOption.SO_KEEPALIVE, true)
-                .childOption(ChannelOption.TCP_NODELAY, true)
+//                .option(ChannelOption.SO_BACKLOG, 1024)
+//                .childOption(ChannelOption.SO_KEEPALIVE, true)
+//                .childOption(ChannelOption.TCP_NODELAY, true)
                 // when NioServerSocketChannel processes traffic, logging handler will logging the info
-                .handler(new LoggingHandler(LogLevel.INFO))
+//                .handler(new LoggingHandler(LogLevel.INFO))
                 .childHandler(new NettyServerHandlerInitializer());
 
         channelFuture = bootstrap.bind().sync();
-
-        if (channelFuture.isSuccess()){
+        if (channelFuture.isSuccess()) {
             log.info("Netty server started!");
         }
+
     }
 
     @PreDestroy
-    public void destory() throws InterruptedException{
-        try{
-            channelFuture.channel().closeFuture().sync();
-        } finally {
-            work.shutdownGracefully().sync();
-            boss.shutdownGracefully().sync();
-        }
-
+    public void destroy() throws InterruptedException {
+        channelFuture.channel().closeFuture().sync();
+        work.shutdownGracefully().sync();
+        boss.shutdownGracefully().sync();
         log.info("Netty server stopped!");
     }
 
