@@ -39,11 +39,14 @@ public final class MessageBase {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\rmessage.proto\022\024org.learn.realtimeim\"O\n" +
-      "\007Message\022\021\n\tmessageId\030\001 \001(\t\022\020\n\010senderId\030" +
-      "\002 \001(\t\022\016\n\006chatId\030\003 \001(\t\022\017\n\007content\030\004 \001(\tB6" +
-      "\n%org.learn.realtimeim.protocol.messageB" +
-      "\013MessageBaseP\001b\006proto3"
+      "\n\rmessage.proto\022\024org.learn.realtimeim\"\324\001" +
+      "\n\007Message\0227\n\004type\030\001 \001(\0162).org.learn.real" +
+      "timeim.Message.ContentType\022\020\n\010senderId\030\002" +
+      " \001(\t\022\016\n\006chatId\030\003 \001(\t\022\017\n\007content\030\004 \001(\t\"]\n" +
+      "\013ContentType\022\n\n\006NORMAL\020\000\022\017\n\013PING_SIGNAL\020" +
+      "\001\022\017\n\013PONG_SIGNAL\020\002\022\020\n\014PRIVATE_CHAT\020\003\022\016\n\n" +
+      "GROUP_CHAT\020\004B6\n%org.learn.realtimeim.pro" +
+      "tocol.messageB\013MessageBaseP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -54,7 +57,7 @@ public final class MessageBase {
     internal_static_org_learn_realtimeim_Message_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_learn_realtimeim_Message_descriptor,
-        new java.lang.String[] { "MessageId", "SenderId", "ChatId", "Content", });
+        new java.lang.String[] { "Type", "SenderId", "ChatId", "Content", });
     descriptor.resolveAllFeaturesImmutable();
   }
 

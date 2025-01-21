@@ -1,10 +1,8 @@
 package org.learn.realtimeim.netty;
 
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCountUtil;
@@ -18,12 +16,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * This class is for handling traffic
  *
- * @author choejeongho
+ * @author Jayden Choe
  * @version 08/01/2025
  */
 @Slf4j
 @ChannelHandler.Sharable
-public class NettyServerHandler extends ChannelInboundHandlerAdapter {
+public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
 
     private AtomicInteger idle_count = new AtomicInteger(1);
     private AtomicInteger connect_count = new AtomicInteger(1);
@@ -33,14 +31,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         log.info("Connect to client: {}", ctx.channel().remoteAddress());
-//        Message message = Message.newBuilder()
-//                .setMessageId("0")
-//                .setChatId("0")
-//                .setSenderId("0")
-//                .setContent("Channel Active!")
-//                .build();
-//
-//        ctx.writeAndFlush(message);
 
         ctx.writeAndFlush("Hello! Channel active!");
         super.channelActive(ctx);
@@ -51,33 +41,69 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      * traffic handling logic
      */
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object message) throws Exception {
+    public void channelRead0(ChannelHandlerContext ctx, Message message) throws Exception {
         log.info("Get {}th message from client", connect_count);
 
         try {
-            if (message instanceof TextWebSocketFrame msg){
-                log.info("Here is the message: {}", msg.text());
-                TextWebSocketFrame res = new TextWebSocketFrame("Get the {}th message from client");
-                ctx.writeAndFlush(res);
-//            if (message instanceof Message msg) {
-//                log.info("Get message from client: {}", msg.toString());
-//                Message responseMessage = Message.newBuilder()
-//                        .setMessageId("1")
-//                        .setChatId("1")
-//                        .setSenderId("1")
-//                        .setContent("Message received")
-//                        .build();
-//                ctx.writeAndFlush(responseMessage);
-            } else {
-                log.info("Unknown data: {}", message);
-                return;
+            Message.ContentType msgType = message.getType();
+            switch (msgType) {
+                case PING_SIGNAL:
+                    handlePingPong(ctx,message);
+                    break;
+                case PRIVATE_CHAT:
+                    handlePrivateChat(ctx, message);
+                    break;
+                case GROUP_CHAT:
+                    handleGroupChat(ctx, message);
+                    break;
+                default:
+                    log.info("Unknown data: {}", message);
+                    break;
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             ReferenceCountUtil.release(message);
         }
         connect_count.getAndIncrement();
+    }
+
+    private void handleGroupChat(ChannelHandlerContext ctx, Message message) {
+        log.info("Get the group chat message: [sender: {} ; chat: {}; content: {}]",
+                message.getSenderId(),
+                message.getChatId(),
+                message.getContent()
+        );
+    }
+
+
+    private void handlePrivateChat(ChannelHandlerContext ctx, Message message) {
+        log.info("Get the private chat message: [sender: {} ; chat: {}; content: {}]",
+                message.getSenderId(),
+                message.getChatId(),
+                message.getContent()
+        );
+
+        Message response = Message.newBuilder()
+                .setType(Message.ContentType.PRIVATE_CHAT)
+                .setChatId("1")
+                .setSenderId("2")
+                .setContent("Server: get your message : " + message.getContent())
+                .build();
+
+        ctx.writeAndFlush(response);
+
+    }
+
+    private void handlePingPong(ChannelHandlerContext ctx, Message message) {
+        log.info("Get the PING message from: {}", ctx.channel().remoteAddress());
+        Message response = Message.newBuilder()
+                .setType(Message.ContentType.PONG_SIGNAL)
+                .build();
+
+        ctx.writeAndFlush(response);
+
     }
 
     /**
@@ -108,4 +134,5 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         cause.printStackTrace();
         ctx.close();
     }
+
 }

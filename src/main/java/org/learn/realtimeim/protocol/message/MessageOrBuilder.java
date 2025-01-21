@@ -10,16 +10,15 @@ public interface MessageOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string messageId = 1;</code>
-   * @return The messageId.
+   * <code>.org.learn.realtimeim.Message.ContentType type = 1;</code>
+   * @return The enum numeric value on the wire for type.
    */
-  java.lang.String getMessageId();
+  int getTypeValue();
   /**
-   * <code>string messageId = 1;</code>
-   * @return The bytes for messageId.
+   * <code>.org.learn.realtimeim.Message.ContentType type = 1;</code>
+   * @return The type.
    */
-  com.google.protobuf.ByteString
-      getMessageIdBytes();
+  org.learn.realtimeim.protocol.message.Message.ContentType getType();
 
   /**
    * <code>string senderId = 2;</code>

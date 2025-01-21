@@ -27,7 +27,7 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private Message() {
-    messageId_ = "";
+    type_ = 0;
     senderId_ = "";
     chatId_ = "";
     content_ = "";
@@ -46,43 +46,166 @@ private static final long serialVersionUID = 0L;
             org.learn.realtimeim.protocol.message.Message.class, org.learn.realtimeim.protocol.message.Message.Builder.class);
   }
 
-  public static final int MESSAGEID_FIELD_NUMBER = 1;
-  @SuppressWarnings("serial")
-  private volatile java.lang.Object messageId_ = "";
   /**
-   * <code>string messageId = 1;</code>
-   * @return The messageId.
+   * Protobuf enum {@code org.learn.realtimeim.Message.ContentType}
    */
-  @java.lang.Override
-  public java.lang.String getMessageId() {
-    java.lang.Object ref = messageId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      messageId_ = s;
-      return s;
+  public enum ContentType
+      implements com.google.protobuf.ProtocolMessageEnum {
+    /**
+     * <code>NORMAL = 0;</code>
+     */
+    NORMAL(0),
+    /**
+     * <code>PING_SIGNAL = 1;</code>
+     */
+    PING_SIGNAL(1),
+    /**
+     * <code>PONG_SIGNAL = 2;</code>
+     */
+    PONG_SIGNAL(2),
+    /**
+     * <code>PRIVATE_CHAT = 3;</code>
+     */
+    PRIVATE_CHAT(3),
+    /**
+     * <code>GROUP_CHAT = 4;</code>
+     */
+    GROUP_CHAT(4),
+    UNRECOGNIZED(-1),
+    ;
+
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 27,
+        /* patch= */ 3,
+        /* suffix= */ "",
+        ContentType.class.getName());
     }
+    /**
+     * <code>NORMAL = 0;</code>
+     */
+    public static final int NORMAL_VALUE = 0;
+    /**
+     * <code>PING_SIGNAL = 1;</code>
+     */
+    public static final int PING_SIGNAL_VALUE = 1;
+    /**
+     * <code>PONG_SIGNAL = 2;</code>
+     */
+    public static final int PONG_SIGNAL_VALUE = 2;
+    /**
+     * <code>PRIVATE_CHAT = 3;</code>
+     */
+    public static final int PRIVATE_CHAT_VALUE = 3;
+    /**
+     * <code>GROUP_CHAT = 4;</code>
+     */
+    public static final int GROUP_CHAT_VALUE = 4;
+
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static ContentType valueOf(int value) {
+      return forNumber(value);
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     */
+    public static ContentType forNumber(int value) {
+      switch (value) {
+        case 0: return NORMAL;
+        case 1: return PING_SIGNAL;
+        case 2: return PONG_SIGNAL;
+        case 3: return PRIVATE_CHAT;
+        case 4: return GROUP_CHAT;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<ContentType>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        ContentType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<ContentType>() {
+            public ContentType findValueByNumber(int number) {
+              return ContentType.forNumber(number);
+            }
+          };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+        getValueDescriptor() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalStateException(
+            "Can't get the descriptor of an unrecognized enum value.");
+      }
+      return getDescriptor().getValues().get(ordinal());
+    }
+    public final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptorForType() {
+      return getDescriptor();
+    }
+    public static final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptor() {
+      return org.learn.realtimeim.protocol.message.Message.getDescriptor().getEnumTypes().get(0);
+    }
+
+    private static final ContentType[] VALUES = values();
+
+    public static ContentType valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException(
+          "EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private ContentType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:org.learn.realtimeim.Message.ContentType)
+  }
+
+  public static final int TYPE_FIELD_NUMBER = 1;
+  private int type_ = 0;
+  /**
+   * <code>.org.learn.realtimeim.Message.ContentType type = 1;</code>
+   * @return The enum numeric value on the wire for type.
+   */
+  @java.lang.Override public int getTypeValue() {
+    return type_;
   }
   /**
-   * <code>string messageId = 1;</code>
-   * @return The bytes for messageId.
+   * <code>.org.learn.realtimeim.Message.ContentType type = 1;</code>
+   * @return The type.
    */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-      getMessageIdBytes() {
-    java.lang.Object ref = messageId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      messageId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  @java.lang.Override public org.learn.realtimeim.protocol.message.Message.ContentType getType() {
+    org.learn.realtimeim.protocol.message.Message.ContentType result = org.learn.realtimeim.protocol.message.Message.ContentType.forNumber(type_);
+    return result == null ? org.learn.realtimeim.protocol.message.Message.ContentType.UNRECOGNIZED : result;
   }
 
   public static final int SENDERID_FIELD_NUMBER = 2;
@@ -216,8 +339,8 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(messageId_)) {
-      com.google.protobuf.GeneratedMessage.writeString(output, 1, messageId_);
+    if (type_ != org.learn.realtimeim.protocol.message.Message.ContentType.NORMAL.getNumber()) {
+      output.writeEnum(1, type_);
     }
     if (!com.google.protobuf.GeneratedMessage.isStringEmpty(senderId_)) {
       com.google.protobuf.GeneratedMessage.writeString(output, 2, senderId_);
@@ -237,8 +360,9 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(messageId_)) {
-      size += com.google.protobuf.GeneratedMessage.computeStringSize(1, messageId_);
+    if (type_ != org.learn.realtimeim.protocol.message.Message.ContentType.NORMAL.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(1, type_);
     }
     if (!com.google.protobuf.GeneratedMessage.isStringEmpty(senderId_)) {
       size += com.google.protobuf.GeneratedMessage.computeStringSize(2, senderId_);
@@ -264,8 +388,7 @@ private static final long serialVersionUID = 0L;
     }
     org.learn.realtimeim.protocol.message.Message other = (org.learn.realtimeim.protocol.message.Message) obj;
 
-    if (!getMessageId()
-        .equals(other.getMessageId())) return false;
+    if (type_ != other.type_) return false;
     if (!getSenderId()
         .equals(other.getSenderId())) return false;
     if (!getChatId()
@@ -283,8 +406,8 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + MESSAGEID_FIELD_NUMBER;
-    hash = (53 * hash) + getMessageId().hashCode();
+    hash = (37 * hash) + TYPE_FIELD_NUMBER;
+    hash = (53 * hash) + type_;
     hash = (37 * hash) + SENDERID_FIELD_NUMBER;
     hash = (53 * hash) + getSenderId().hashCode();
     hash = (37 * hash) + CHATID_FIELD_NUMBER;
@@ -422,7 +545,7 @@ private static final long serialVersionUID = 0L;
     public Builder clear() {
       super.clear();
       bitField0_ = 0;
-      messageId_ = "";
+      type_ = 0;
       senderId_ = "";
       chatId_ = "";
       content_ = "";
@@ -460,7 +583,7 @@ private static final long serialVersionUID = 0L;
     private void buildPartial0(org.learn.realtimeim.protocol.message.Message result) {
       int from_bitField0_ = bitField0_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
-        result.messageId_ = messageId_;
+        result.type_ = type_;
       }
       if (((from_bitField0_ & 0x00000002) != 0)) {
         result.senderId_ = senderId_;
@@ -485,10 +608,8 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(org.learn.realtimeim.protocol.message.Message other) {
       if (other == org.learn.realtimeim.protocol.message.Message.getDefaultInstance()) return this;
-      if (!other.getMessageId().isEmpty()) {
-        messageId_ = other.messageId_;
-        bitField0_ |= 0x00000001;
-        onChanged();
+      if (other.type_ != 0) {
+        setTypeValue(other.getTypeValue());
       }
       if (!other.getSenderId().isEmpty()) {
         senderId_ = other.senderId_;
@@ -531,11 +652,11 @@ private static final long serialVersionUID = 0L;
             case 0:
               done = true;
               break;
-            case 10: {
-              messageId_ = input.readStringRequireUtf8();
+            case 8: {
+              type_ = input.readEnum();
               bitField0_ |= 0x00000001;
               break;
-            } // case 10
+            } // case 8
             case 18: {
               senderId_ = input.readStringRequireUtf8();
               bitField0_ |= 0x00000002;
@@ -568,74 +689,55 @@ private static final long serialVersionUID = 0L;
     }
     private int bitField0_;
 
-    private java.lang.Object messageId_ = "";
+    private int type_ = 0;
     /**
-     * <code>string messageId = 1;</code>
-     * @return The messageId.
+     * <code>.org.learn.realtimeim.Message.ContentType type = 1;</code>
+     * @return The enum numeric value on the wire for type.
      */
-    public java.lang.String getMessageId() {
-      java.lang.Object ref = messageId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        messageId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+    @java.lang.Override public int getTypeValue() {
+      return type_;
     }
     /**
-     * <code>string messageId = 1;</code>
-     * @return The bytes for messageId.
-     */
-    public com.google.protobuf.ByteString
-        getMessageIdBytes() {
-      java.lang.Object ref = messageId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        messageId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string messageId = 1;</code>
-     * @param value The messageId to set.
+     * <code>.org.learn.realtimeim.Message.ContentType type = 1;</code>
+     * @param value The enum numeric value on the wire for type to set.
      * @return This builder for chaining.
      */
-    public Builder setMessageId(
-        java.lang.String value) {
-      if (value == null) { throw new NullPointerException(); }
-      messageId_ = value;
+    public Builder setTypeValue(int value) {
+      type_ = value;
       bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
     /**
-     * <code>string messageId = 1;</code>
+     * <code>.org.learn.realtimeim.Message.ContentType type = 1;</code>
+     * @return The type.
+     */
+    @java.lang.Override
+    public org.learn.realtimeim.protocol.message.Message.ContentType getType() {
+      org.learn.realtimeim.protocol.message.Message.ContentType result = org.learn.realtimeim.protocol.message.Message.ContentType.forNumber(type_);
+      return result == null ? org.learn.realtimeim.protocol.message.Message.ContentType.UNRECOGNIZED : result;
+    }
+    /**
+     * <code>.org.learn.realtimeim.Message.ContentType type = 1;</code>
+     * @param value The type to set.
      * @return This builder for chaining.
      */
-    public Builder clearMessageId() {
-      messageId_ = getDefaultInstance().getMessageId();
+    public Builder setType(org.learn.realtimeim.protocol.message.Message.ContentType value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      bitField0_ |= 0x00000001;
+      type_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.org.learn.realtimeim.Message.ContentType type = 1;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearType() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string messageId = 1;</code>
-     * @param value The bytes for messageId to set.
-     * @return This builder for chaining.
-     */
-    public Builder setMessageIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) { throw new NullPointerException(); }
-      checkByteStringIsUtf8(value);
-      messageId_ = value;
-      bitField0_ |= 0x00000001;
+      type_ = 0;
       onChanged();
       return this;
     }

@@ -19,7 +19,7 @@ import java.net.InetSocketAddress;
 /**
  * This class is for netty server
  *
- * @author choejeongho
+ * @author Jayden Choe
  * @version 07/01/2025
  */
 
@@ -37,7 +37,7 @@ public class NettyServer {
     private EventLoopGroup work = new NioEventLoopGroup();
 
     /**
-     * channel future
+     * channel future for binding
      */
     private ChannelFuture channelFuture;
 
@@ -50,23 +50,24 @@ public class NettyServer {
         bootstrap.group(boss, work)
                 .channel(NioServerSocketChannel.class)
                 .localAddress(new InetSocketAddress(nettyPort))
-//                .option(ChannelOption.SO_BACKLOG, 1024)
-//                .childOption(ChannelOption.SO_KEEPALIVE, true)
-//                .childOption(ChannelOption.TCP_NODELAY, true)
+                .option(ChannelOption.SO_BACKLOG, 1024)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childOption(ChannelOption.TCP_NODELAY, true)
                 // when NioServerSocketChannel processes traffic, logging handler will logging the info
-//                .handler(new LoggingHandler(LogLevel.INFO))
+                .handler(new LoggingHandler(LogLevel.INFO))
                 .childHandler(new NettyServerHandlerInitializer());
 
         channelFuture = bootstrap.bind().sync();
+        channelFuture.channel().closeFuture().sync();
         if (channelFuture.isSuccess()) {
             log.info("Netty server started!");
         }
 
     }
 
+
     @PreDestroy
     public void destroy() throws InterruptedException {
-        channelFuture.channel().closeFuture().sync();
         work.shutdownGracefully().sync();
         boss.shutdownGracefully().sync();
         log.info("Netty server stopped!");

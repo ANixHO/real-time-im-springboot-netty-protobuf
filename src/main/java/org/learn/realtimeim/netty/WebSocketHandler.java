@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * This class is for xxxx
  *
- * @author choejeongho
+ * @author Jayden Choe
  * @version 14/01/2025
  */
 
@@ -29,7 +29,11 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) {
         Channel channel = ctx.channel();
         log.info("{}: {}", channel.remoteAddress(), msg.text());
-        ctx.channel().writeAndFlush(new TextWebSocketFrame("Get the " + msg_count + "th message from you.: " + msg.text()));
+        if ("ping".equalsIgnoreCase(msg.text())){
+            ctx.channel().writeAndFlush(new TextWebSocketFrame("pong"));
+        } else {
+            ctx.channel().writeAndFlush(new TextWebSocketFrame("Get the " + msg_count + "th message from you.: " + msg.text()));
+        }
         msg_count.getAndIncrement();
     }
 
