@@ -46,8 +46,7 @@ public class NettyServerHandlerInitializer  extends ChannelInitializer<SocketCha
         ChannelPipeline ph = socketChannel.pipeline();
 
         // idle handler, params: reader idle time, writer idle time, all idle time
-        ph.addLast(new IdleStateHandler(300, 0, 0, TimeUnit.SECONDS));
-
+        ph.addLast(new IdleStateHandler(10, 0, 0, TimeUnit.SECONDS));
 
         ph.addLast(new HttpServerCodec());
         ph.addLast(new ChunkedWriteHandler());

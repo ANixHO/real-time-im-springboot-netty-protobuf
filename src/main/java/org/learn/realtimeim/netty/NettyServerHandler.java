@@ -7,6 +7,7 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.learn.realtimeim.async.UserChannelMap;
 import org.learn.realtimeim.protocol.message.Message;
 import org.w3c.dom.Text;
 
@@ -31,11 +32,15 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
      */
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         log.info("Connect to client: {}", ctx.channel().remoteAddress());
-
-        ctx.writeAndFlush("Hello! Channel active!");
-        super.channelActive(ctx);
-
     }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        UserChannelMap.removeUserChannel(ctx.channel());
+        log.info("Inactivate the channel: {}", ctx.channel().remoteAddress());
+        super.channelInactive(ctx);
+    }
+
 
     /**
      * traffic handling logic
@@ -56,6 +61,9 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
                 case GROUP_CHAT:
                     handleGroupChat(ctx, message);
                     break;
+                case ADD_USER_CHANNEL:
+                    handleAddUserChannel(ctx, message);
+                    break;
                 default:
                     log.info("Unknown data: {}", message);
                     break;
@@ -67,6 +75,13 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
             ReferenceCountUtil.release(message);
         }
         connect_count.getAndIncrement();
+    }
+
+    private void handleAddUserChannel(ChannelHandlerContext ctx, Message message) {
+        Channel channel = ctx.channel();
+        String userId = message.getSenderId();
+        UserChannelMap.addUserChannel(userId, channel);
+        ctx.flush();
     }
 
     private void handleGroupChat(ChannelHandlerContext ctx, Message message) {
@@ -102,9 +117,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
         // need to return String 'pong' here, rather than serialised message by protobuf
 
         TextWebSocketFrame pong = new TextWebSocketFrame("pong");
-
         ctx.writeAndFlush(pong);
-
     }
 
     /**
@@ -114,9 +127,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
     public void userEventTriggered(ChannelHandlerContext ctx, Object object) throws Exception {
         if (object instanceof IdleStateEvent event) {
             if (IdleState.READER_IDLE.equals(event.state())) {
-                log.info("Haven't been received data from client for 5 seconds");
-                if (idle_count.get() > 10) {
+                log.info("Haven't been received data from client for 10 seconds");
+                if (idle_count.get() > 3) {
                     log.info("Close this inactive channel");
+                    UserChannelMap.removeUserChannel(ctx.channel());
                     ctx.channel().close();
                 }
                 idle_count.getAndIncrement();
@@ -133,7 +147,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
      */
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
+        UserChannelMap.removeUserChannel(ctx.channel());
         ctx.close();
     }
+
+
 
 }
