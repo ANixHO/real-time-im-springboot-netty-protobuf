@@ -98,11 +98,12 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
 
     private void handlePingPong(ChannelHandlerContext ctx, Message message) {
         log.info("Get the PING message from: {}", ctx.channel().remoteAddress());
-        Message response = Message.newBuilder()
-                .setType(Message.ContentType.PONG_SIGNAL)
-                .build();
+        // due to 'react-use-websocket' library only accept string as pong signal
+        // need to return String 'pong' here, rather than serialised message by protobuf
 
-        ctx.writeAndFlush(response);
+        TextWebSocketFrame pong = new TextWebSocketFrame("pong");
+
+        ctx.writeAndFlush(pong);
 
     }
 
